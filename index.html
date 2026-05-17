@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>WordPlay - Spelling Challenge</title>
+
+				<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+					<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+						<style>
+							/* ==========================================================================
+							1. CORE STYLES & MOBILE FORCED CONTAINER
+							========================================================================== */
+							* {
+							margin: 0;
+							padding: 0;
+							box-sizing: border-box;
+							font-family: 'Inter', sans-serif;
+							-webkit-tap-highlight-color: transparent;
+							}
+
+							body {
+							background-color: #0c0f14;
+							color: #ffffff;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							min-height: 100vh;
+							}
+
+							.app-container {
+							width: 100%;
+							max-width: 420px;
+							height: 100vh;
+							max-height: 850px;
+							background: linear-gradient(180deg, #131722 0%, #0c0f14 100%);
+							border: 1px solid rgba(255, 255, 255, 0.05);
+							box-shadow: 0 24px 75px rgba(0, 0, 0, 0.6);
+							display: flex;
+							flex-direction: column;
+							overflow: hidden;
+							position: relative;
+							}
+
+							@media (min-width: 425px) {
+							.app-container {
+							border-radius: 32px;
+							height: 92vh;
+							}
+							}
+
+							.scrollable-body {
+							flex: 1;
+							overflow-y: auto;
+							padding: 20px;
+							display: flex;
+							flex-direction: column;
+							gap: 20px;
+							}
+
+							.scrollable-body::-webkit-scrollbar {
+							width: 0px;
+							}
+
+							/* ==========================================================================
+							2. SECTION: BANNER ADS PLACEHOLDER
+							========================================================================== */
+							.banner-ad-box {
+							width: 100%;
+							height: 60px;
+							background: rgba(255, 255, 255, 0.02);
+							border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							color: rgba(255, 255, 255, 0.3);
+							font-size: 11px;
+							letter-spacing: 2px;
+							text-transform: uppercase;
+							}
+
+							/* ==========================================================================
+							3. SECTION: TOP NAV-BAR (Dashboard - Points - Claim)
+							========================================================================== */
+							.top-nav-bar {
+							background: rgba(255, 255, 255, 0.03);
+							border: 1px solid rgba(255, 255, 255, 0.08);
+							border-radius: 16px;
+							padding: 12px 16px;
+							display: flex;
+							justify-content: space-between;
+							align-items: center;
+							backdrop-filter: blur(10px);
+							}
+
+							.home-icon-btn {
+							color: rgba(255, 255, 255, 0.6);
+							font-size: 18px;
+							cursor: pointer;
+							transition: color 0.2s;
+							width: 36px;
+							height: 36px;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							border-radius: 50%;
+							background: rgba(255, 255, 255, 0.02);
+							}
+
+							.home-icon-btn:hover {
+							color: #ffffff;
+							background: rgba(255, 255, 255, 0.08);
+							}
+
+							.point-balance-display {
+							display: flex;
+							flex-direction: column;
+							align-items: center;
+							}
+
+							.point-balance-display span:first-child {
+							font-size: 10px;
+							color: rgba(255, 255, 255, 0.4);
+							text-transform: uppercase;
+							letter-spacing: 1px;
+							}
+
+							.point-balance-display span:last-child {
+							font-size: 18px;
+							font-weight: 700;
+							color: #f3ba2f;
+							}
+
+							.claim-btn {
+							background: rgba(255, 255, 255, 0.05);
+							color: rgba(255, 255, 255, 0.3);
+							border: 1px solid rgba(255, 255, 255, 0.05);
+							padding: 8px 16px;
+							border-radius: 20px;
+							font-size: 12px;
+							font-weight: 600;
+							cursor: pointer;
+							transition: all 0.3s ease;
+							pointer-events: none; /* Disabled by default */
+							}
+
+							.claim-btn.active {
+							background: linear-gradient(135deg, #00ff87 0%, #60efff 100%);
+							border: none;
+							color: #000000;
+							opacity: 1;
+							pointer-events: auto;
+							box-shadow: 0 4px 20px rgba(0, 255, 135, 0.3);
+							animation: pulseGlow 1.5s infinite alternate;
+							}
+
+							@keyframes pulseGlow {
+							0% { transform: scale(1); }
+							100% { transform: scale(1.04); }
+							}
+
+							/* ==========================================================================
+							4. SECTION: PREMIUM INSTRUCTIONS
+							========================================================================== */
+							.instruction-text {
+							font-size: 13px;
+							color: rgba(255, 255, 255, 0.6);
+							text-align: center;
+							line-height: 1.5;
+							font-weight: 400;
+							padding: 0 10px;
+							}
+
+							.instruction-text span {
+							color: #60efff;
+							font-weight: 500;
+							}
+
+							/* ==========================================================================
+							5. SECTION: HIGHLIGHTED SESSION BOX
+							========================================================================== */
+							.session-badge-box {
+							background: rgba(96, 239, 255, 0.03);
+							border: 1px dashed rgba(96, 239, 255, 0.2);
+							border-radius: 12px;
+							padding: 10px;
+							text-align: center;
+							}
+
+							.session-badge-box span {
+							font-size: 13px;
+							font-weight: 600;
+							letter-spacing: 0.5px;
+							color: #60efff;
+							}
+
+							/* ==========================================================================
+							6. SECTION: MAIN GAMEPLAY DISPLAY (Word Box)
+							========================================================================== */
+							.game-word-screen {
+							background: rgba(255, 255, 255, 0.02);
+							border: 1px solid rgba(255, 255, 255, 0.08);
+							border-radius: 24px;
+							height: 110px;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							font-size: 24px;
+							font-weight: 700;
+							letter-spacing: 6px;
+							transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+							text-transform: uppercase;
+							padding: 0 15px;
+							text-align: center;
+							}
+
+							.game-word-screen.correct-state {
+							background: rgba(0, 255, 135, 0.08);
+							border-color: #00ff87;
+							color: #00ff87;
+							box-shadow: 0 0 30px rgba(0, 255, 135, 0.1);
+							}
+
+							.game-word-screen.wrong-state {
+							background: rgba(255, 76, 76, 0.08);
+							border-color: #ff4c4c;
+							color: #ff4c4c;
+							box-shadow: 0 0 30px rgba(255, 76, 76, 0.1);
+							animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both;
+							}
+
+							@keyframes shake {
+							10%, 90% { transform: translate3d(-2px, 0, 0); }
+							20%, 80% { transform: translate3d(3px, 0, 0); }
+							30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+							40%, 60% { transform: translate3d(5px, 0, 0); }
+							}
+
+							/* ==========================================================================
+							7. SECTION: CLUES ROW (4 Options Grid)
+							========================================================================== */
+							.clues-grid-row {
+							display: grid;
+							grid-template-columns: repeat(4, 1fr);
+							gap: 10px;
+							width: 100%;
+							}
+
+							.clue-option-box {
+							background: rgba(255, 255, 255, 0.03);
+							border: 1px solid rgba(255, 255, 255, 0.08);
+							border-radius: 14px;
+							height: 54px;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							font-size: 15px;
+							font-weight: 600;
+							color: rgba(255, 255, 255, 0.8);
+							cursor: pointer;
+							transition: all 0.2s ease;
+							letter-spacing: 1px;
+							}
+
+							.clues-grid-row.disabled-click .clue-option-box {
+							pointer-events: none;
+							opacity: 0.4;
+							}
+
+							.clue-option-box.correct-choice {
+							background: #00ff87 !important;
+							border-color: #00ff87 !important;
+							color: #000000 !important;
+							}
+
+							.clue-option-box.wrong-choice {
+							background: #ff4c4c !important;
+							border-color: #ff4c4c !important;
+							color: #ffffff !important;
+							}
+
+							/* ==========================================================================
+							8. SECTION: ACTION SYSTEM BUTTON
+							========================================================================== */
+							.action-button-wrapper {
+							margin-top: auto;
+							padding-bottom: 10px;
+							}
+
+							.primary-action-btn {
+							width: 100%;
+							background: rgba(255, 255, 255, 0.05);
+							border: 1px solid rgba(255, 255, 255, 0.1);
+							color: rgba(255, 255, 255, 0.8);
+							padding: 16px;
+							border-radius: 16px;
+							font-size: 15px;
+							font-weight: 600;
+							cursor: pointer;
+							transition: all 0.2s ease;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							gap: 8px;
+							}
+
+							.primary-action-btn:disabled {
+							opacity: 0.4;
+							pointer-events: none;
+							}
+
+							/* ==========================================================================
+							9. NEW SECTION: PREMIUM CUSTOM POPUP (No Buttons, Smooth Fade)
+							========================================================================== */
+							.premium-popup-overlay {
+							position: absolute;
+							top: 0;
+							left: 0;
+							width: 100%;
+							height: 100%;
+							background: rgba(12, 15, 20, 0.85);
+							backdrop-filter: blur(8px);
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							z-index: 1000;
+							opacity: 0;
+							pointer-events: none;
+							transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+							}
+
+							.premium-popup-overlay.show {
+							opacity: 1;
+							pointer-events: auto;
+							}
+
+							.premium-popup-card {
+							background: #171d29;
+							border: 1px solid rgba(0, 255, 135, 0.2);
+							box-shadow: 0 20px 50px rgba(0, 255, 135, 0.1);
+							border-radius: 28px;
+							width: 85%;
+							padding: 30px 24px;
+							text-align: center;
+							transform: scale(0.85);
+							transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+							}
+
+							.premium-popup-overlay.show .premium-popup-card {
+							transform: scale(1);
+							}
+
+							.popup-success-icon {
+							width: 60px;
+							height: 60px;
+							background: rgba(0, 255, 135, 0.1);
+							border-radius: 50%;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							margin: 0 auto 16px auto;
+							color: #00ff87;
+							font-size: 26px;
+							animation: scaleCheck 0.5s ease forwards;
+							}
+
+							@keyframes scaleCheck {
+							0% { transform: scale(0); }
+							100% { transform: scale(1); }
+							}
+
+							.premium-popup-card h3 {
+							font-size: 20px;
+							font-weight: 700;
+							color: #ffffff;
+							margin-bottom: 10px;
+							letter-spacing: 0.5px;
+							}
+
+							.premium-popup-card p {
+							font-size: 13px;
+							color: rgba(255, 255, 255, 0.6);
+							line-height: 1.6;
+							}
+
+							.premium-popup-card p span {
+							color: #f3ba2f;
+							font-weight: 600;
+							}
+						</style>
+					</head>
+	<body>
+
+		<div class="app-container">
+
+			<div class="premium-popup-overlay" id="custom-success-popup">
+				<div class="premium-popup-card">
+					<div class="popup-success-icon">
+						<i class="fa-solid fa-layer-group"></i>
+					</div>
+					<h3>Session Complete!</h3>
+					<p>
+						You have successfully finished the session layout. Please tap the <span>Claim Button</span> at the top to secure your rewards and unlock the next cycle.
+					</p>
+				</div>
+			</div>
+
+			<div class="banner-ad-box">
+				[ Banner Advertisement Placeholder ]
+			</div>
+
+			<div class="scrollable-body">
+
+				<div class="top-nav-bar">
+					<div class="home-icon-btn" onclick="goToDashboard()">
+						<i class="fa-solid fa-house"></i>
+					</div>
+					<div class="point-balance-display">
+						<span>Balance</span>
+						<span id="user-points">0</span>
+					</div>
+					<button class="claim-btn" id="claim-reward-btn" onclick="triggerClaimReward()">Claim</button>
+				</div>
+
+				<p class="instruction-text">
+					Identify the missing adjacent pairs to reconstruct the <span>Correct Word</span> and securely harvest your session rewards.
+				</p>
+
+				<div class="session-badge-box">
+					<span id="session-counter-text">Session: 0 / 20</span>
+				</div>
+
+				<div class="game-word-screen" id="main-word-box">
+					Loading Dictionary...
+				</div>
+
+				<div class="clues-grid-row" id="clues-container">
+				</div>
+
+				<div class="action-button-wrapper">
+					<button class="primary-action-btn" id="skip-action-btn" onclick="skipCurrentWord()">
+						Skip This Word <i class="fa-solid fa-arrow-right"></i>
+					</button>
+				</div>
+
+			</div>
+		</div>
+
+		<script>
+			// System Core Reactive States
+			let currentSessionCount = 0;
+			const totalSessionTarget = 20;
+			let pointsBalance = 0; // Forced default global balance to 0
+
+			let activeFullWord = "";
+			let activeBlanksPattern = "";
+			let correctCluePair = "";
+			let systemLock = false;
+
+			window.onload = function() {
+			fetchWordFromRealDictionary();
+			};
+
+			/**
+			* Core Engine: Fetches real random english word from Global Dictionary API live
+			*/
+			async function fetchWordFromRealDictionary() {
+			if (currentSessionCount >= totalSessionTarget) return;
+
+			document.getElementById('main-word-box').innerText = "Fetching Word...";
+			document.getElementById('clues-container').innerHTML = "";
+			systemLock = true;
+
+			try {
+			const response = await fetch('https://random-word-api.herokuapp.com/word?number=1');
+			const data = await response.json();
+			let fetchedWord = data[0].toUpperCase();
+
+			if (fetchedWord.length >= 5 && /^[A-Z]+$/.test(fetchedWord)) {
+			processDictionaryWordSetup(fetchedWord);
+			} else {
+			fetchWordFromRealDictionary();
+			}
+			} catch (error) {
+			console.error("Dictionary API Error. Falling back to emergency layout.");
+			processDictionaryWordSetup("SPELLING");
+			}
+			}
+
+			/**
+			* Slices word, builds dynamic layout configurations
+			*/
+			function processDictionaryWordSetup(targetWord) {
+			activeFullWord = targetWord;
+
+			const maxCutIndex = activeFullWord.length - 2;
+			const cutIndex = Math.floor(Math.random() * (maxCutIndex + 1));
+
+			correctCluePair = activeFullWord.substr(cutIndex, 2);
+			activeBlanksPattern = activeFullWord.substring(0, cutIndex) + "_ _" + activeFullWord.substring(cutIndex + 2);
+
+			document.getElementById('main-word-box').innerText = activeBlanksPattern;
+
+			const generatedCluesSet = new Set([correctCluePair]);
+			const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+			while (generatedCluesSet.size < 4) {
+                let fakeClue = "";
+                if (Math.random() > 0.5) {
+                    let randomChar = alphabets[Math.floor(Math.random() * alphabets.length)];
+                    fakeClue = correctCluePair[0] + randomChar;
+                } else {
+                    let randomChar = alphabets[Math.floor(Math.random() * alphabets.length)];
+                    fakeClue = randomChar + correctCluePair[1];
+                }
+
+                if (fakeClue !== correctCluePair) {
+                    generatedCluesSet.add(fakeClue);
+                }
+            }
+
+            const finalOptionsArray = Array.from(generatedCluesSet).sort(() => Math.random() - 0.5);
+            const cluesContainer = document.getElementById('clues-container');
+            cluesContainer.innerHTML = "";
+            cluesContainer.classList.remove('disabled-click'); 
+
+            finalOptionsArray.forEach(clueString => {
+                const boxElement = document.createElement('div');
+                boxElement.className = 'clue-option-box';
+                boxElement.innerText = clueString;
+                boxElement.onclick = function() { handleClueSelection(this, clueString); };
+                cluesContainer.appendChild(boxElement);
+            });
+
+            document.getElementById('skip-action-btn').disabled = false;
+            systemLock = false; 
+        }
+
+        /**
+         * Evaluates User Choices with absolute hardlocks and dynamic point routing (+2 points)
+         */
+        function handleClueSelection(selectedBoxElement, chosenString) {
+            if (systemLock) return;
+            systemLock = true; 
+
+            const wordDisplayBox = document.getElementById('main-word-box');
+            const cluesContainer = document.getElementById('clues-container');
+            const skipButton = document.getElementById('skip-action-btn');
+
+            cluesContainer.classList.add('disabled-click');
+            skipButton.disabled = true;
+
+            if (chosenString === correctCluePair) {
+                // SUCCESS STATE ROUTINE
+                selectedBoxElement.classList.add('correct-choice');
+                wordDisplayBox.classList.add('correct-state');
+                wordDisplayBox.innerText = activeFullWord; 
+
+                // ADD REWARDS: +2 Points to running memory and +1 to session tracks
+                pointsBalance += 2;
+                document.getElementById('user-points').innerText = pointsBalance.toLocaleString();
+                
+                currentSessionCount++;
+                const isSessionDone = updateSessionTrackerDisplay();
+
+                // If session is complete, do not request a new word, let the popup take over
+                setTimeout(() => {
+                    wordDisplayBox.classList.remove('correct-state');
+                    if (!isSessionDone) {
+                        fetchWordFromRealDictionary();
+                    }
+                }, 3000);
+
+            } else {
+                // FAILURE STATE ROUTINE
+                selectedBoxElement.classList.add('wrong-choice');
+                wordDisplayBox.classList.add('wrong-state');
+
+                setTimeout(() => {
+                    selectedBoxElement.classList.remove('wrong-choice');
+                    wordDisplayBox.classList.remove('wrong-state');
+                    cluesContainer.classList.remove('disabled-click'); 
+                    skipButton.disabled = false;
+                    systemLock = false; 
+                }, 3000);
+            }
+        }
+
+        /**
+         * Skip Control Function
+         */
+        function skipCurrentWord() {
+            if (systemLock || currentSessionCount >= totalSessionTarget) return;
+            document.getElementById('skip-action-btn').disabled = true;
+            fetchWordFromRealDictionary();
+        }
+
+        function goToDashboard() {
+            console.log("Redirecting user back to core application dashboard UI.");
+        }
+
+        /**
+         * Session Tracking UI Engine & Popup Trigger Matrix
+         */
+        function updateSessionTrackerDisplay() {
+            const trackerText = document.getElementById('session-counter-text');
+            const claimBtn = document.getElementById('claim-reward-btn');
+
+            trackerText.innerText = `Session: ${currentSessionCount} / ${totalSessionTarget}`;
+
+            if (currentSessionCount >= totalSessionTarget) {
+                // Hardlock UI completely
+                document.getElementById('main-word-box').innerText = "SESSION DONE";
+                document.getElementById('clues-container').innerHTML = ""; 
+                document.getElementById('skip-action-btn').disabled = true;
+                document.getElementById('clues-container').classList.add('disabled-click');
+
+                // Trigger Premium Custom Popup instantly
+                const successPopup = document.getElementById('custom-success-popup');
+                successPopup.classList.add('show');
+
+                // STRICT RULE: Auto-dismiss popup in exactly 3 seconds and unleash the Claim Button
+                setTimeout(() => {
+                    successPopup.classList.remove('show');
+                    claimBtn.classList.add('active'); // Activate Claim glow and click mechanics
+                }, 15000);
+
+                return true;
+            }
+            return false;
+        }
+
+
+        /* ==========================================================================
+           11. FIREBASE READY CLAIM SYSTEM (Isolated & Structured for future editing)
+           ========================================================================== */
+        function triggerClaimReward() {
+            const claimBtn = document.getElementById('claim-reward-btn');
+            
+            // ------------------------------------------------------------------
+            // DEV NOTE: Place your Firebase Firestore / Realtime Database Push 
+            // script here. (e.g., db.ref('users/' + userId).update({ points: pointsBalance }))
+            // ------------------------------------------------------------------
+            console.log(`Firebase Safe Sync Triggered! Total Points to Sync: ${pointsBalance}`);
+
+            // HARD RESET: Flash memory parameters back to absolute zero state matrix
+            pointsBalance = 0; 
+            currentSessionCount = 0;
+            
+            // Sync running view parameters instantly
+            document.getElementById('user-points').innerText = "0";
+            updateSessionTrackerDisplay();
+            
+            // Turn off claim button visibility
+            claimBtn.classList.remove('active');
+            
+            // Spin up clean new layout pipeline
+            fetchWordFromRealDictionary(); 
+        }
+		</script>
+	</body>
+</html>
