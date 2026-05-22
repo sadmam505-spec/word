@@ -375,6 +375,26 @@
 						color: #f3ba2f;
 						font-weight: 600;
 						}
+
+						.home-icon-btn {
+						background: rgba(255, 255, 255, 0.03);
+						border: 1px solid rgba(255, 255, 255, 0.08);
+						color: #ffffff;
+						width: 38px;
+						height: 38px;
+						border-radius: 50%;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						cursor: pointer;
+						transition: all 0.2s;
+						}
+
+						.home-icon-btn:active {
+						transform: scale(0.9);
+						background: rgba(74, 222, 128, 0.2);
+						color: #4ade80;
+						}
 					</style>
 				</head>
 	<body>
@@ -658,54 +678,67 @@
 
 			/**
 			* Session Tracking & Popup Control Engine
-			*/
-			function updateSessionTrackerDisplay() {
-			const trackerText = document.getElementById('session-counter-text');
-			const claimBtn = document.getElementById('claim-reward-btn');
+				*/
+				function updateSessionTrackerDisplay() {
+				const trackerText = document.getElementById('session-counter-text');
+				const claimBtn = document.getElementById('claim-reward-btn');
 
-			trackerText.innerText = `Session: ${currentSessionCount} / ${totalSessionTarget}`;
+				trackerText.innerText = `Session: ${currentSessionCount} / ${totalSessionTarget}`;
 
-			if (currentSessionCount >= totalSessionTarget) {
-			document.getElementById('main-word-box').innerText = "SESSION DONE";
-			document.getElementById('clues-container').innerHTML = "";
-			document.getElementById('skip-action-btn').disabled = true;
-			document.getElementById('clues-container').classList.add('disabled-click');
+				if (currentSessionCount >= totalSessionTarget) {
+				document.getElementById('main-word-box').innerText = "SESSION DONE";
+				document.getElementById('clues-container').innerHTML = "";
+				document.getElementById('skip-action-btn').disabled = true;
+				document.getElementById('clues-container').classList.add('disabled-click');
 
-			// কাস্টম সাকসেস পপআপ স্ক্রিনে শো করবে
-			const successPopup = document.getElementById('custom-success-popup');
-			successPopup.classList.add('show');
+				// কাস্টম সাকসেস পপআপ স্ক্রিনে শো করবে
+				const successPopup = document.getElementById('custom-success-popup');
+				successPopup.classList.add('show');
 
-			// ৪ সেকেন্ড পর পপআপ হাইড হয়ে ক্লেম বাটন অ্যাক্টিভ হবে
-			setTimeout(() => {
-			successPopup.classList.remove('show');
-			claimBtn.classList.add('active');
-			}, 4000);
+				// ৪ সেকেন্ড পর পপআপ হাইড হয়ে ক্লেম বাটন অ্যাক্টিভ হবে
+				setTimeout(() => {
+				successPopup.classList.remove('show');
+				claimBtn.classList.add('active');
+				}, 4000);
 
-			return true;
-			}
-			return false;
-			}
+				return true;
+				}
+				return false;
+				}
 
-			/**
-			* 💰 FIREBASE READY CLAIM REWARD SYSTEM (Fully Restored)
-			*/
-			function triggerClaimReward() {
-			const claimBtn = document.getElementById('claim-reward-btn');
+				/**
+				* 💰 FIREBASE READY CLAIM REWARD SYSTEM (Fully Restored)
+				*/
+				function triggerClaimReward() {
+				const claimBtn = document.getElementById('claim-reward-btn');
 
-			// ব্যাক-এন্ড এবং ফায়ারবেসে ডেটা পুশ করার হুক
-			console.log(`Firebase Safe Sync Triggered! Total Points to Sync: ${pointsBalance}`);
+				// ব্যাক-এন্ড এবং ফায়ারবেসে ডেটা পুশ করার হুক
+				console.log(`Firebase Safe Sync Triggered! Total Points to Sync: ${pointsBalance}`);
 
-			// সেশন রিসেট স্টেট লজিক
-			pointsBalance = 0;
-			currentSessionCount = 0;
+				// সেশন রিসেট স্টেট লজিক
+				pointsBalance = 0;
+				currentSessionCount = 0;
 
-			document.getElementById('user-points').innerText = "0";
-			updateSessionTrackerDisplay();
+				document.getElementById('user-points').innerText = "0";
+				updateSessionTrackerDisplay();
 
-			// ক্লেম বাটন আবার ডিঅ্যাক্টিভ করে গেম নতুন করে লুপ স্টার্ট করবে
-			claimBtn.classList.remove('active');
-			generateWordFromSecureMemoryBank();
-			}
+				// ক্লেম বাটন আবার ডিঅ্যাক্টিভ করে গেম নতুন করে লুপ স্টার্ট করবে
+				claimBtn.classList.remove('active');
+				generateWordFromSecureMemoryBank();
+				}
+
+			
+					// ১. বাটন ক্লিক করলে ড্যাশবোর্ডে যাবে
+					function goToDashboard() {
+					window.location.href = "https://dashboard.gritorax.com";
+					}
+
+					// ২. ফোনের নেভিগেশন ব্যাক বাটনের জন্য লজিক
+					history.pushState(null, null, window.location.href);
+					window.addEventListener('popstate', function(event) {
+					window.location.href = "https://dashboard.gritorax.com";
+					});
+				
 		</script>
 	</body>
 </html>
